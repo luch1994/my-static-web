@@ -10,7 +10,8 @@ const IS_OPEN_CACHE = true; // 是否开启缓存功能
 const CACHE_TIME = 10;// 告诉浏览器多少时间内可以不用请求服务器，单位：秒
 
 const server = http.createServer((req, res) => {
-  const obj = url.parse(req.url); // 解析请求的url
+  let reqUrl = decodeURIComponent(req.url); // 中文解码
+  const obj = url.parse(reqUrl); // 解析请求的url
   let pathname = obj.pathname; // 请求的路径
   if (pathname === '/') {
     pathname = './index.html';
