@@ -29,17 +29,30 @@ const server = http.createServer((req, res) => {
       res.write(`the request ${pathname} is not found`);
       res.end();
     } else if (stats.isDirectory()) {
-      fs.readdir(realPath, (err, files) => {
+      // 读取文件夹
+      fs.readdir(realPath, {
+        encoding: 'utf8'
+      }, (err, files) => {
         res.statusCode = 200;
-        res.setHeader('content-type', 'text/html');
+        res.setHeader('content-type', 'text/html');        
         let result = '';
         for (let i = 0; i < files.length; i++) {
-          let file = files[i];
-          result += `<a href="${req.url}/${file}">${file}</a><br/>`;
+          result += `<a href="${req.url}/${files[i]}">${files[i]}</a><br/>`;
         }
-        res.end(result);
-      })
+        let html = `
+          <!doctype html>
+          <html>
+            <head>
+              <meta charset='utf-8'/>
+            </head>
+            <body>
+              ${result}
+            </body>
+          </html>`;
+        res.end(html);
+      });
     } else {
+      // 读取文件
       let ext = path.extname(realPath).slice(1); // 获取文件拓展名
       contentType = mime.getType(ext) || 'text/plain';
       endFilePath = realPath;
