@@ -28,6 +28,17 @@ const server = http.createServer((req, res) => {
       });
       res.write(`the request ${pathname} is not found`);
       res.end();
+    } else if (stats.isDirectory()) {
+      fs.readdir(realPath, (err, files) => {
+        res.statusCode = 200;
+        res.setHeader('content-type', 'text/html');
+        let result = '';
+        for (let i = 0; i < files.length; i++) {
+          let file = files[i];
+          result += `<a href="${req.url}/${file}">${file}</a><br/>`;
+        }
+        res.end(result);
+      })
     } else {
       let ext = path.extname(realPath).slice(1); // 获取文件拓展名
       contentType = mime.getType(ext) || 'text/plain';
