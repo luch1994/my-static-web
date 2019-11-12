@@ -6,22 +6,22 @@ const path = require('path');
 const mime = require('mime');
 
 const STATIC_FOLDER = 'public'; // 默认读取public文件夹下的文件
-const IS_OPEN_CACHE = true; // 是否开启缓存功能
+const IS_OPEN_CACHE = false; // 是否开启缓存功能
 const CACHE_TIME = 10;// 告诉浏览器多少时间内可以不用请求服务器，单位：秒
 
 const server = http.createServer((req, res) => {
   let reqUrl = decodeURIComponent(req.url); // 中文解码
   const obj = url.parse(reqUrl); // 解析请求的url
   let pathname = obj.pathname; // 请求的路径
-  if (pathname === '/') {
-    pathname = './index.html';
-  }
+  // if (pathname === '/') {
+  //   pathname = './index.html';
+  // }
   const realPath = path.join(__dirname, STATIC_FOLDER, pathname); // 获取物理路径
 
   // 获取文件基本信息，包括大小，创建时间修改时间等信息
   fs.stat(realPath, (err, stats) => {
     let endFilePath = '', contentType = '';;
-    if (err || stats.isDirectory()) {
+    if (err) {
       // 报错了或者请求的路径是文件夹，则返回404
       res.writeHead(404, 'not found', {
         'Content-Type': 'text/plain'
@@ -29,15 +29,17 @@ const server = http.createServer((req, res) => {
       res.write(`the request ${pathname} is not found`);
       res.end();
     } else if (stats.isDirectory()) {
-      // 读取文件夹
       fs.readdir(realPath, {
         encoding: 'utf8'
       }, (err, files) => {
         res.statusCode = 200;
-        res.setHeader('content-type', 'text/html');        
+        res.setHeader('content-type', 'text/html');
         let result = '';
         for (let i = 0; i < files.length; i++) {
-          result += `<a href="${req.url}/${files[i]}">${files[i]}</a><br/>`;
+          if (pathname === '/') {
+            pathname = '';
+          }
+          result += `<a href="${pathname}/${files[i]}">${files[i]}</a><br/>`;
         }
         let html = `
           <!doctype html>
@@ -52,9 +54,9 @@ const server = http.createServer((req, res) => {
         res.end(html);
       });
     } else {
-      // 读取文件
       let ext = path.extname(realPath).slice(1); // 获取文件拓展名
       contentType = mime.getType(ext) || 'text/plain';
+      // console.log(`ext: ${ext}, content-type: ${contentType}`);
       endFilePath = realPath;
 
       if (!IS_OPEN_CACHE) {
@@ -82,7 +84,9 @@ const server = http.createServer((req, res) => {
           res.setHeader('Last-Modified', lastModified);
 
           // 返回文件
-          let raw = fs.createReadStream(endFilePath);
+          let raw = fs.createReadStream(endFilePath, {
+            encoding: 'utf-8'
+          });
           res.writeHead(200, 'ok');
           raw.pipe(res);
         }
@@ -92,4 +96,4 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port);
-console.log(`server is running at http://localhost:${port}`)
+console.log(`server is running at http://localhost:${port}`);
