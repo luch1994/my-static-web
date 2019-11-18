@@ -58,7 +58,7 @@ const server = http.createServer((req, res) => {
       contentType = mime.getType(ext) || 'text/plain';
       // console.log(`ext: ${ext}, content-type: ${contentType}`);
       endFilePath = realPath;
-
+      res.setHeader('content-type', contentType);
       if (!IS_OPEN_CACHE) {
         // 未开启缓存
         let raw = fs.createReadStream(endFilePath);
