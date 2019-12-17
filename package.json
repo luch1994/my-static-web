@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NearKid/my-static-web.git"
+    "url": "git+https://github.com/luch1994/my-static-web.git"
   },
   "author": "luch",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/NearKid/my-static-web/issues"
+    "url": "https://github.com/luch1994/my-static-web/issues"
   },
-  "homepage": "https://github.com/NearKid/my-static-web#readme",
+  "homepage": "https://github.com/luch1994/my-static-web#readme",
   "dependencies": {
     "mime": "^2.4.4"
   }
