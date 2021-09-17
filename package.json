@@ -1,5 +1,5 @@
 {
-  "name": "my-static-web",
+  "name": "@luch1994/static-web",
   "version": "1.0.0",
   "description": "nodejs静态文件服务器",
   "main": "index.js",
@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/luch1994/my-static-web#readme",
   "dependencies": {
+    "commander": "^8.2.0",
     "mime": "^2.4.4"
+  },
+  "bin": {
+    "localserver": "bin/index.js"
   }
 }
