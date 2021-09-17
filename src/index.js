@@ -4,11 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const mime = require('mime');
 
-module.exports = function start(port = 3000, rootDir) {
+module.exports = function start(port = 3000, rootDir, options) {
   const IS_OPEN_CACHE = false; // 是否开启缓存功能
   const CACHE_TIME = 10;// 告诉浏览器多少时间内可以不用请求服务器，单位：秒
   const server = http.createServer(async (req, res) => {
     let reqUrl = decodeURIComponent(req.url); // 中文解码
+    if (options.log) {
+      console.log(`request ${reqUrl}`)
+    }
     const reqObj = url.parse(reqUrl);
     const realPath = path.join(rootDir, reqObj.pathname); // 获取物理路径
     try {
@@ -90,11 +93,15 @@ async function handleDir(req, res, realPath, pathname) {
 
 async function handleFile(req, res, realPath, pathname) {
   let ext = path.extname(realPath).slice(1); // 获取文件拓展名
-  const contentType = mime.getType(ext) || 'text/plain';
-  res.setHeader('content-type', contentType + ';charset=utf-8');
-  let raw = fs.createReadStream(realPath, {
-    encoding: 'utf-8'
-  });
+  let contentType = mime.getType(ext) || 'text/plain';
+  const option = {};
+  if (contentType.startsWith('text')) {
+    contentType += ';charset=utf-8';
+    option.encoding = 'utf-8';
+  }
+  res.setHeader('content-type', contentType);
+  
+  let raw = fs.createReadStream(realPath, option);
   res.writeHead(200, 'ok');
   raw.pipe(res);
 }

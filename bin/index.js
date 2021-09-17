@@ -12,6 +12,7 @@ program
 program
     .command('start')
     .option('-p --port <port>', 'set server port')
+    .option('-l --log', 'console log request url')
     .on('--help', () => {
         console.log('start a file server');
         console.log('启动文件服务器');
@@ -21,7 +22,9 @@ program
         if (cmd.port) {
             port = parseInt(cmd.port);
         }
-        startServer(port, process.cwd());
+        startServer(port, process.cwd(), {
+            log: cmd.log
+        });
     });
 
 program.parse(process.argv);

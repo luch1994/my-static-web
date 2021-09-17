@@ -17,6 +17,7 @@ localserver start
 ```bash
 localserver start -p 3001
 ```
+在控制台打印request的url
 ```bash
-localserver start -p 3001
+localserver start -l
 ```
