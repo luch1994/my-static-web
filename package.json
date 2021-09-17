@@ -2,7 +2,7 @@
   "name": "local-file-server",
   "version": "1.0.0",
   "description": "nodejs静态文件服务器",
-  "main": "bin/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/luch1994/my-static-web.git"
   },
-  "author": "luch",
+  "author": "luch1994",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/luch1994/my-static-web/issues"
