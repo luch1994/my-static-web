@@ -17,7 +17,6 @@ program
         console.log('启动文件服务器');
     })
     .action((cmd) => {
-        console.log('进入action');
         let port = 3000;
         if (cmd.port) {
             port = parseInt(cmd.port);

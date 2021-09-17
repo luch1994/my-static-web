@@ -32,10 +32,20 @@ module.exports = function start(port = 3000, rootDir) {
       console.error(error);
       res.statusCode = 404;
       res.setHeader('content-type', 'text/html');
-      res.write('path not found ' + JSON.stringify(error), 'utf-8');
+      res.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <meta charset='utf-8'/>
+          <title>404</title>
+        </head>
+        <body>
+          <h1>404</h1>
+          <p>${JSON.stringify(error)}</p>
+        </body>
+      </html>`, 'utf-8');
       res.end();
     }
-
   });
   server.listen(port);
   console.log(`server is running at http://localhost:${port}`);
