@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <title><%= title %></title>
+        <link rel="shortcut icon " type="images/x-icon" href="/<%= randomHash %>/favicon.ico">
+        <link href="/<%= randomHash %>/style.css" rel="stylesheet" type="text/css" />
+        <link href="/<%= randomHash %>/font/iconfont.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <ul class="file-list">
+            <% files.forEach(function(file){ %>
+              <li>
+                  <a class="link <%= file.icon %>" href="<%= file.url %>">
+                      <i class="iconfont icon-<%= file.icon %>"></i> 
+                      <%= file.name %>
+                    </a>
+              </li>
+            <% }); %>
+          </ul>
+    </body>
+</html>

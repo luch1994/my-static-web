@@ -1,109 +1,23 @@
-const http = require('http');
-const url = require('url');
-const fs = require('fs');
-const path = require('path');
-const mime = require('mime');
 
-module.exports = function start(port = 3000, rootDir, options) {
-  const IS_OPEN_CACHE = false; // 是否开启缓存功能
-  const CACHE_TIME = 10;// 告诉浏览器多少时间内可以不用请求服务器，单位：秒
-  const server = http.createServer(async (req, res) => {
-    let reqUrl = decodeURIComponent(req.url); // 中文解码
-    if (options.log) {
-      console.log(`request ${reqUrl}`)
-    }
-    const reqObj = url.parse(reqUrl);
-    const realPath = path.join(rootDir, reqObj.pathname); // 获取物理路径
-    try {
-      const stats = await new Promise((resolve, reject) => {
-        fs.stat(realPath, (err, stats) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(stats);
-          }
-        });
-      });
+const render = require('./middleware/render.js');
+const handleError = require('./middleware/handleError.js');
+const parse = require('./middleware/parse.js');
+const handleFolder = require('./middleware/handleFolder.js');
+const handleFile = require('./middleware/handleFile.js');
 
-      if (stats.isDirectory()) {
-        await handleDir(req, res, realPath, reqObj.pathname);
-      } else {
-        await handleFile(req, res, realPath, reqObj.pathname);
-      }
+module.exports = function start(port = 3000, options) {
+  const randomHash = 'G4PvheR!bGvL498sJ&TGRdfB8gWXGt1e';
+  options.randomHash = randomHash;
+  const Koa = require('koa');
+  const app = new Koa();
 
-    } catch (error) {
-      console.error(error);
-      res.statusCode = 404;
-      res.setHeader('content-type', 'text/html');
-      res.write(`
-      <!doctype html>
-      <html>
-        <head>
-          <meta charset='utf-8'/>
-          <title>404</title>
-        </head>
-        <body>
-          <h1>404</h1>
-          <p>${JSON.stringify(error)}</p>
-        </body>
-      </html>`, 'utf-8');
-      res.end();
-    }
-  });
-  server.listen(port);
+  app.use(render);
+  app.use(handleError);
+  app.use(parse(options));
+  app.use(handleFolder);
+  app.use(handleFile);
+
+  app.listen(port);
   console.log(`server is running at http://localhost:${port}`);
+
 }
-
-
-
-async function handleDir(req, res, realPath, pathname) {
-  const files = await new Promise((resolve, reject) => {
-    fs.readdir(realPath, {
-      encoding: 'utf-8'
-    }, (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(files);
-      }
-    });
-  });
-  let result = '';
-  pathname = pathname !== '/' ? pathname : '';
-  for (let i = 0; i < files.length; i++) {
-    result += `<a href="${pathname}/${files[i]}">${files[i]}</a><br/>`;
-  }
-  const html = `
-    <!doctype html>
-    <html>
-      <head>
-        <meta charset='utf-8'/>
-        <title>${pathname}</title>
-      </head>
-      <body>
-        ${result}
-      </body>
-    </html>`;
-  res.statusCode = 200;
-  res.setHeader('content-type', 'text/html');
-  res.end(html);
-}
-
-
-
-async function handleFile(req, res, realPath, pathname) {
-  let ext = path.extname(realPath).slice(1); // 获取文件拓展名
-  let contentType = mime.getType(ext) || 'text/plain';
-  const option = {};
-  if (contentType.startsWith('text')) {
-    contentType += ';charset=utf-8';
-    option.encoding = 'utf-8';
-  }
-  res.setHeader('content-type', contentType);
-  
-  let raw = fs.createReadStream(realPath, option);
-  res.writeHead(200, 'ok');
-  raw.pipe(res);
-}
-
-

@@ -1,7 +1,11 @@
-# my-static-web
+# Local-file-server
 ## 简单易用的、使用命令行启动的Nodejs简单的静态文件服务器
 
 当我们需要在本地启动一个静态资源的服务器的时候，可以使用我们这个工具
+
+样式预览
+
+<img src="./readme-file/01.png" alt="01" style="zoom:50%;" />
 
 全局安装
 ```sh
@@ -12,6 +16,10 @@ npm install -g local-file-server
 ```bash
 localserver start
 ```
+或者直接运行
+```bash
+localserver
+```
 
 默认启动在3000端口，也可以指定端口
 ```bash
@@ -21,3 +29,4 @@ localserver start -p 3001
 ```bash
 localserver start -l
 ```
+启动之后，在浏览器打开 <a href="http://localhost:3000">http://localhost:3000</a> 即可
