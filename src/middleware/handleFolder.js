@@ -7,21 +7,25 @@ const getFolderFiles = require('../utils/getFolderFiles.js');
 module.exports = async function (ctx, next) {
   if (ctx.isDirectory) {
     const files = await getFolderFiles(ctx.realPath);
-    const pathname = ctx.url !== '/' ? ctx.url : '';
+    const pathname = ctx.url !== '/' ? decodeURIComponent(ctx.url) : '';
     const result = [];
-    for(const file of files) {
-      const url = `${pathname}/${file}`;
-      const realPath = await getRealPath(url, ctx.rootDir, ctx.randomHash);
-      const folderFlag = await isFolder(realPath);
-      let icon = getIcon(realPath, folderFlag);
-      if (file.startsWith('.')) {
-        icon += ' hidden-file'
+    for (const file of files) {
+      try {
+        const url = `${pathname}/${file}`;
+        const realPath = await getRealPath(url, ctx.rootDir, ctx.randomHash);
+        const folderFlag = await isFolder(realPath);
+        let icon = getIcon(realPath, folderFlag);
+        if (file.startsWith('.')) {
+          icon += ' hidden-file'
+        }
+        result.push({
+          url,
+          name: file,
+          icon,
+        })
+      } catch (error) {
+        console.log(error);
       }
-      result.push({
-        url,
-        name: file,
-        icon,
-      })
     }
     ctx.render(path.join(__dirname, '../template/folder.html'), {
       title: pathname,
