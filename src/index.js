@@ -1,23 +1,24 @@
+const parseUrl = require('./middleware/parseUrl');
+const handleFile = require('./middleware/handleFile');
+const render = require('./middleware/render');
+const handleFolder = require('./middleware/handleFolder');
+const handleError = require('./middleware/handleError');
+const handleIco = require('./middleware/handleIco');
 
-const render = require('./middleware/render.js');
-const handleError = require('./middleware/handleError.js');
-const parse = require('./middleware/parse.js');
-const handleFolder = require('./middleware/handleFolder.js');
-const handleFile = require('./middleware/handleFile.js');
+module.exports = function start(options) {
+    const Koa = require('koa');
+    const app = new Koa();
 
-module.exports = function start(port = 3000, options) {
-  const randomHash = 'G4PvheR!bGvL498sJ&TGRdfB8gWXGt1e';
-  options.randomHash = randomHash;
-  const Koa = require('koa');
-  const app = new Koa();
+    const randomHash = 'G4PvheR!bGvL498sJ&TGRdfB8gWXGt1e';
+    options.randomHash = randomHash;
 
-  app.use(render);
-  app.use(handleError);
-  app.use(parse(options));
-  app.use(handleFolder);
-  app.use(handleFile);
+    app.use(render);
+    app.use(handleError);
+    app.use(handleIco(randomHash));
+    app.use(parseUrl(options));
+    app.use(handleFile);
+    app.use(handleFolder);
 
-  app.listen(port);
-  console.log(`server is running at http://localhost:${port}`);
-
+    app.listen(options.port);
+    console.log(`server is running at http://localhost:${options.port}`);
 }

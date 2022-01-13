@@ -5,7 +5,7 @@
 
 样式预览
 
-<img src="https://img.yasuotu.com/uploads/2021/09/25/614e9769b51be_614e9769e27eb.png" alt="01" style="zoom:50%;" />
+<img src="https://s3.bmp.ovh/imgs/2021/12/cbc50343bf4b4256.png" alt="01" style="zoom:50%;" />
 
 全局安装
 ```sh

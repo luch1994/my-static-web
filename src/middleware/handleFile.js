@@ -1,15 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const mime = require('mime');
+const mime = require('mime-types');
 
 module.exports = async function (ctx, next) {
-    let ext = path.extname(ctx.realPath).slice(1); // 获取文件拓展名
-    let contentType = mime.getType(ext) || 'text/plain';
-    const option = {};
-    if (contentType.startsWith('text')) {
-        contentType += ';charset=utf-8';
-        option.encoding = 'utf-8';
+    if (!ctx.isDirectory) {
+        let ext = path.extname(ctx.realPath); // 获取文件拓展名
+        const contentType = mime.contentType(ext) || 'text/plain';
+        ctx.type = contentType;
+        ctx.body = fs.createReadStream(ctx.realPath);
+    } else {
+        await next();
     }
-    ctx.type = contentType;
-    ctx.body = fs.createReadStream(ctx.realPath, option);
 }
