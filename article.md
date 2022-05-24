@@ -1,4 +1,4 @@
-# 手摸手教你使用nodejs开发一个命令行工具，顺便做一个静态资源服务器
+# 命令行工具开发了解+文件服务了解+vite源码略读+开发简版vite
 话不多说，先上项目地址
 https://www.npmjs.com/package/local-file-server
 
