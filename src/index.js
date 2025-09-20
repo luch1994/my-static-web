@@ -4,6 +4,7 @@ const render = require('./middleware/render');
 const handleFolder = require('./middleware/handleFolder');
 const handleError = require('./middleware/handleError');
 const handleIco = require('./middleware/handleIco');
+const cors = require('./middleware/cors');
 
 module.exports = function start(options) {
     const Koa = require('koa');
@@ -12,6 +13,8 @@ module.exports = function start(options) {
     const randomHash = 'G4PvheR!bGvL498sJ&TGRdfB8gWXGt1e';
     options.randomHash = randomHash;
 
+    // CORS 中间件应该在其他中间件之前执行
+    app.use(cors);
     app.use(render);
     app.use(handleError);
     app.use(handleIco(randomHash));
